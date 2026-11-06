@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Supported Video Formats | VIDLORA</title>
+  <meta name="description" content="Learn about video formats supported by VIDLORA, including MP4 and WebM, and understand browser compatibility and download limitations.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://thisismevenkat6734.github.io/Vidlora/supported-formats.html">
+
+  <link rel="icon" href="assets/icons/favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar container">
+      <a href="index.html" class="logo">VIDLORA</a>
+
+      <button class="menu-toggle" id="menuToggle"
+        aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="nav-menu" id="navMenu">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container legal-page">
+    <section class="page-hero">
+      <h1>Supported Video Formats</h1>
+      <p>Understand which direct video file formats VIDLORA is designed to handle.</p>
+    </section>
+
+    <section class="content-section">
+      <h2>1. Currently Supported Formats</h2>
+      <p>VIDLORA is initially designed for direct video file URLs using these formats:</p>
+
+      <h3>MP4 (.mp4)</h3>
+      <p>MP4 is a widely used video container format. Browser playback depends on the codecs inside the file and the browser's capabilities.</p>
+      <ul>
+        <li>Common extension: <strong>.mp4</strong></li>
+        <li>Common MIME type: <strong>video/mp4</strong></li>
+        <li>Often compatible with modern browsers.</li>
+      </ul>
+
+      <h3>WebM (.webm)</h3>
+      <p>WebM is a web-oriented media container format supported by many modern browsers. Playback depends on the codecs used by the file and browser support.</p>
+      <ul>
+        <li>Common extension: <strong>.webm</strong></li>
+        <li>Common MIME type: <strong>video/webm</strong></li>
+        <li>Supported by many modern browsers.</li>
+      </ul>
+
+      <h2>2. Format Support Table</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Format</th>
+            <th>Extension</th>
+            <th>Initial Support</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>MP4</td>
+            <td>.mp4</td>
+            <td>Designed to be supported</td>
+          </tr>
+          <tr>
+            <td>WebM</td>
+            <td>.webm</td>
+            <td>Designed to be supported</td>
+          </tr>
+          <tr>
+            <td>MOV</td>
+            <td>.mov</td>
+            <td>Not currently supported</td>
+          </tr>
+          <tr>
+            <td>AVI</td>
+            <td>.avi</td>
+            <td>Not currently supported</td>
+          </tr>
+          <tr>
+            <td>MKV</td>
+            <td>.mkv</td>
+            <td>Not currently supported</td>
+          </tr>
+          <tr>
+            <td>FLV</td>
+            <td>.flv</td>
+            <td>Not currently supported</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>3. Important: Extension Does Not Guarantee Compatibility</h2>
+      <p>A file ending in .mp4 or .webm is not automatically guaranteed to work. The actual media content, MIME type, codecs, server configuration, and browser support all matter.</p>
+
+      <h2>4. Browser Compatibility</h2>
+      <p>Use an up-to-date browser for the best experience. Video playback and downloads may behave differently across Android, iOS, Windows, macOS, and other platforms.</p>
+
+      <h2>5. Server and Network Restrictions</h2>
+      <p>Even a supported video format may fail when:</p>
+      <ul>
+        <li>The source server blocks cross-origin browser requests.</li>
+        <li>The video URL requires authentication or has expired.</li>
+        <li>The server does not provide the correct media response.</li>
+        <li>The network connection is interrupted.</li>
+        <li>The browser does not support the video's codec.</li>
+        <li>The source server does not permit the requested download behavior.</li>
+      </ul>
+
+      <h2>6. What VIDLORA Does Not Support</h2>
+      <ul>
+        <li>DRM-protected or encrypted media extraction.</li>
+        <li>Bypassing paywalls or access restrictions.</li>
+        <li>Unauthorized private or restricted video access.</li>
+        <li>Automatic extraction from arbitrary social media pages.</li>
+        <li>Guaranteed downloading from every video website.</li>
+      </ul>
+
+      <h2>7. Future Format Support</h2>
+      <p>Additional formats may be considered in future versions after compatibility, security, and browser behavior have been evaluated. No future format support is guaranteed.</p>
+
+      <h2>8. Try VIDLORA</h2>
+      <p>Have an authorized direct MP4 or WebM video URL?</p>
+      <p><a href="index.html">Go to VIDLORA Home →</a></p>
+
+      <h2>9. Need Help?</h2>
+      <p>For technical questions, visit our <a href="contact.html">Contact page</a>.</p>
+
+      <p>Also read our <a href="how-to-use.html">How to Use guide</a>.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; <span id="currentYear"></span> VIDLORA. All rights reserved.</p>
+
+      <div class="footer-links">
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="how-to-use.html">How to Use</a>
+        <a href="supported-formats.html">Supported Formats</a>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms & Conditions</a>
+        <a href="copyright-policy.html">Copyright Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
