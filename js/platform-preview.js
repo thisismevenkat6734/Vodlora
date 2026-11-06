@@ -1,11 +1,6 @@
-
 /**
  * VIDLORA - Platform Preview
- * Creates official platform embeds for supported video URLs.
- *
- * No video extraction.
- * No DRM bypass.
- * No third-party downloader services.
+ * Official platform embeds and download availability UI.
  */
 
 "use strict";
@@ -19,7 +14,7 @@
     dailymotion: ["www.dailymotion.com"]
   };
 
-  const PLATFORM_LABELS = {
+  const LABELS = {
     youtube: "YouTube",
     instagram: "Instagram",
     facebook: "Facebook",
@@ -27,49 +22,122 @@
     dailymotion: "Dailymotion"
   };
 
-  function createElement(tag, className) {
-    const element = document.createElement(tag);
-
-    if (className) {
-      element.className = className;
-    }
-
-    return element;
+  function element(tag, className) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    return el;
   }
 
   function clear(container) {
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
+    container.replaceChildren();
   }
 
-  function validateEmbedUrl(result) {
-    if (!result || !result.embedUrl || !result.platform) {
-      throw new Error("No supported embed URL was provided.");
+  function validateEmbed(result) {
+    const allowed = ALLOWED_EMBED_HOSTS[result.platform];
+
+    if (!allowed || !result.embedUrl) {
+      throw new Error("Unsupported embed.");
     }
 
-    const allowedHosts = ALLOWED_EMBED_HOSTS[result.platform];
-
-    if (!allowedHosts) {
-      throw new Error("This platform does not support embeds here.");
-    }
-
-    let url;
-
-    try {
-      url = new URL(result.embedUrl);
-    } catch {
-      throw new Error("Invalid embed URL.");
-    }
+    const url = new URL(result.embedUrl);
 
     if (
       url.protocol !== "https:" ||
-      !allowedHosts.includes(url.hostname)
+      !allowed.includes(url.hostname)
     ) {
-      throw new Error("The embed URL is not allowed.");
+      throw new Error("Untrusted embed URL.");
     }
 
     return url;
+  }
+
+  function showMessage(container, message) {
+    const box = element("div", "vidlora-preview-message");
+    box.setAttribute("role", "status");
+    box.textContent = message;
+    container.appendChild(box);
+  }
+
+  function renderPlatform(result, container) {
+    const url = validateEmbed(result);
+
+    const wrapper = element("div", "vidlora-preview-frame");
+
+    const title = element("h3", "vidlora-preview-title");
+    title.textContent = (LABELS[result.platform] || "Video") + " Preview";
+
+    const iframe = element("iframe", "vidlora-preview-iframe");
+
+    iframe.src = url.href;
+    iframe.title = title.textContent;
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "strict-origin-when-cross-origin";
+    iframe.allowFullscreen = true;
+    iframe.allow =
+      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+    iframe.setAttribute(
+      "sandbox",
+      "allow-scripts allow-same-origin allow-presentation allow-popups"
+    );
+
+    wrapper.append(title, iframe);
+    container.appendChild(wrapper);
+
+    const downloadInfo = element("div", "vidlora-platform-download");
+
+    const heading = element("h4");
+    heading.textContent = "Download Availability";
+
+    const message = element("p");
+    message.textContent =
+      "This platform preview does not provide a direct downloadable video file. VIDLORA cannot download this embedded video.";
+
+    const disabledButton = element(
+      "button",
+      "download-button result-download"
+    );
+
+    disabledButton.type = "button";
+    disabledButton.disabled = true;
+    disabledButton.textContent = "Download Not Available";
+
+    const sourceLink = element("a", "primary-button");
+    sourceLink.href = result.originalUrl;
+    sourceLink.target = "_blank";
+    sourceLink.rel = "noopener noreferrer";
+    sourceLink.textContent = "Open Original Video ↗";
+
+    downloadInfo.append(
+      heading,
+      message,
+      disabledButton,
+      sourceLink
+    );
+
+    container.appendChild(downloadInfo);
+  }
+
+  function showDirectVideo(result, container) {
+    const wrapper = element("div", "vidlora-direct-preview");
+
+    const title = element("h3", "vidlora-preview-title");
+    title.textContent = "Direct Video Preview";
+
+    const video = element("video", "vidlora-video-player");
+    video.controls = true;
+    video.preload = "metadata";
+    video.playsInline = true;
+
+    const source = document.createElement("source");
+    source.src = result.originalUrl;
+    source.type = result.format === "mp4"
+      ? "video/mp4"
+      : "video/webm";
+
+    video.appendChild(source);
+    wrapper.append(title, video);
+    container.appendChild(wrapper);
   }
 
   function render(result, container) {
@@ -84,93 +152,23 @@
         container,
         result && result.message
           ? result.message
-          : "Preview is not available for this link."
+          : "Preview is unavailable."
       );
-
       return false;
     }
 
-    if (result.platform === "direct") {
-      showDirectVideo(result, container);
-      return true;
-    }
-
-    let embedUrl;
-
     try {
-      embedUrl = validateEmbedUrl(result);
+      if (result.platform === "direct") {
+        showDirectVideo(result, container);
+      } else {
+        renderPlatform(result, container);
+      }
+
+      return true;
     } catch (error) {
       showMessage(container, error.message);
       return false;
     }
-
-    const wrapper = createElement("div", "vidlora-preview-frame");
-
-    const title = createElement("h3", "vidlora-preview-title");
-    title.textContent =
-      (PLATFORM_LABELS[result.platform] || "Video") +
-      " Preview";
-
-    const iframe = createElement("iframe", "vidlora-preview-iframe");
-
-    iframe.src = embedUrl.href;
-    iframe.title = title.textContent;
-    iframe.loading = "lazy";
-    iframe.referrerPolicy = "strict-origin-when-cross-origin";
-    iframe.allowFullscreen = true;
-    iframe.allow =
-      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-
-    iframe.setAttribute("sandbox", "allow-scripts allow-same-origin allow-presentation allow-popups");
-
-    wrapper.appendChild(title);
-    wrapper.appendChild(iframe);
-
-    container.appendChild(wrapper);
-
-    return true;
-  }
-
-  function showDirectVideo(result, container) {
-    const wrapper = createElement("div", "vidlora-direct-preview");
-
-    const video = createElement("video", "vidlora-video-player");
-
-    video.controls = true;
-    video.preload = "metadata";
-    video.playsInline = true;
-    video.crossOrigin = "anonymous";
-
-    const source = document.createElement("source");
-    source.src = result.originalUrl;
-
-    source.type = result.format === "mp4"
-      ? "video/mp4"
-      : "video/webm";
-
-    video.appendChild(source);
-
-    const fallback = document.createElement("p");
-    fallback.textContent =
-      "Your browser could not play this video. The source server may restrict playback.";
-
-    video.appendChild(fallback);
-
-    const title = createElement("h3", "vidlora-preview-title");
-    title.textContent = "Video Preview";
-
-    wrapper.appendChild(title);
-    wrapper.appendChild(video);
-
-    container.appendChild(wrapper);
-  }
-
-  function showMessage(container, message) {
-    const box = createElement("div", "vidlora-preview-message");
-    box.setAttribute("role", "status");
-    box.textContent = message;
-
-    container.appendChild(box);
   }
 
   window.VidloraPlatformPreview = Object.freeze({
