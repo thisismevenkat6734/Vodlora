@@ -1,0 +1,295 @@
+
+/* =========================================
+   VIDLORA - RESPONSIVE STYLESHEET
+   File: css/responsive.css
+========================================= */
+
+/* TABLETS */
+
+@media (max-width: 900px) {
+
+  .container {
+    width: 94%;
+  }
+
+  .main-nav {
+    gap: 17px;
+  }
+
+  .main-nav a {
+    font-size: 13px;
+  }
+
+  .hero {
+    padding: 85px 0 75px;
+  }
+
+  .hero h1 {
+    letter-spacing: -2px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .steps-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-main {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px;
+  }
+
+}
+
+
+/* MOBILE NAVIGATION */
+
+@media (max-width: 700px) {
+
+  .header-inner {
+    min-height: 68px;
+  }
+
+  .brand {
+    font-size: 22px;
+  }
+
+  .brand-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .menu-toggle {
+    display: block;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+  }
+
+  .menu-toggle:hover {
+    background: #eff6ff;
+  }
+
+  .main-nav {
+    display: none;
+    position: absolute;
+    top: 68px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 5%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 15px 25px rgba(15, 23, 42, .08);
+  }
+
+  .main-nav.active {
+    display: flex;
+  }
+
+  .main-nav a {
+    padding: 13px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 15px;
+  }
+
+  .main-nav a:last-child {
+    border-bottom: none;
+  }
+
+  .hero {
+    padding: 75px 0 65px;
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 10vw, 53px);
+    letter-spacing: -1.8px;
+  }
+
+  .hero-description {
+    font-size: 15px;
+    padding: 0 5px;
+  }
+
+  .hero-benefits {
+    gap: 12px;
+    font-size: 11px;
+  }
+
+  .section-heading {
+    margin-bottom: 30px;
+  }
+
+  .section-heading h2 {
+    font-size: 29px;
+  }
+
+  .downloader-section,
+  .features-section,
+  .how-section,
+  .formats-section,
+  .faq-section {
+    padding: 65px 0;
+  }
+
+  .downloader-card {
+    padding: 23px 17px;
+    border-radius: 17px;
+  }
+
+  .url-input-wrapper {
+    gap: 8px;
+    padding: 0 10px;
+  }
+
+  .url-input-wrapper input {
+    font-size: 13px;
+  }
+
+  .download-button {
+    min-height: 53px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .feature-card {
+    padding: 23px;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .step-card {
+    padding: 25px 22px;
+  }
+
+  .formats-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .faq-item {
+    padding: 17px;
+  }
+
+  .faq-item summary {
+    font-size: 14px;
+  }
+
+  .cta-section {
+    padding: 60px 15px;
+  }
+
+  .footer-main {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px 20px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+}
+
+
+/* SMALL MOBILE DEVICES */
+
+@media (max-width: 400px) {
+
+  .container {
+    width: 92%;
+  }
+
+  .brand {
+    font-size: 20px;
+  }
+
+  .hero h1 {
+    font-size: 35px;
+  }
+
+  .hero-label {
+    font-size: 9px;
+    padding: 7px 11px;
+  }
+
+  .hero-benefits {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .downloader-card {
+    padding: 18px 13px;
+  }
+
+  .url-input-wrapper {
+    min-height: 55px;
+  }
+
+  .url-input-wrapper input {
+    height: 50px;
+    font-size: 12px;
+  }
+
+  .footer-main {
+    grid-template-columns: 1fr 1fr;
+  }
+
+}
+
+
+/* LANDSCAPE MOBILE */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+  .hero {
+    padding: 45px 0;
+  }
+
+  .hero h1 {
+    font-size: 38px;
+  }
+
+}
+
+
+/* REDUCED MOTION ACCESSIBILITY */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+}
+
+
+/* DARK MODE DEVICE PREFERENCE */
+
+@media (prefers-color-scheme: dark) {
+
+  /* VIDLORA intentionally keeps its default
+     light interface for consistent branding. */
+
+}
