@@ -4,32 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>VIDLORA - Free Online Video Downloader</title>
-
-  <meta name="description" content="VIDLORA is a simple online video downloader for authorized direct MP4 and WebM video links. Preview and download supported videos easily.">
-
-  <meta name="keywords" content="online video downloader, MP4 downloader, WebM downloader, direct video download">
-
+  <title>VIDLORA - Video Preview & Downloader</title>
+  <meta name="description" content="VIDLORA helps you preview videos from supported platforms and download authorized direct MP4 and WebM video files.">
+  <meta name="keywords" content="video preview, MP4 downloader, WebM downloader, online video tool">
   <meta name="author" content="VIDLORA">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#101827">
 
-  <!-- CANONICAL URL -->
-  <link rel="canonical"
-    href="https://thisismevenkat6734.github.io/Vidlora/">
+  <link rel="canonical" href="https://thisismevenkat6734.github.io/Vidlora/">
 
-  <!-- OPEN GRAPH -->
-  <meta property="og:title" content="VIDLORA - Video Downloader">
-  <meta property="og:description" content="Paste an authorized video link, preview it and download supported videos.">
+  <meta property="og:title" content="VIDLORA - Video Preview & Downloader">
+  <meta property="og:description" content="Preview supported video links and download authorized direct video files.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thisismevenkat6734.github.io/Vidlora/">
   <meta property="og:site_name" content="VIDLORA">
 
-  <!-- ICONS -->
   <link rel="icon" href="assets/icons/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
 
   <meta name="mobile-web-app-capable" content="yes">
@@ -37,173 +28,249 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="VIDLORA">
 
-  <!-- CSS -->
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
 
-  <!-- JAVASCRIPT -->
+  <!-- Load scripts in dependency order -->
   <script src="js/app.js" defer></script>
-  <script src="js/downloader.js" defer></script>
+  <script src="js/security.js" defer></script>
+  <script src="js/url-detector.js" defer></script>
+  <script src="js/platform-preview.js" defer></script>
+  <script src="js/direct-video.js" defer></script>
+
+  <style>
+    .platform-preview-area {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .vidlora-preview-frame {
+      width: 100%;
+      max-width: 720px;
+      margin: 20px auto;
+    }
+
+    .vidlora-preview-iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    .vidlora-video-player {
+      width: 100%;
+      max-height: 460px;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    .vidlora-preview-title {
+      margin-bottom: 12px;
+    }
+
+    .vidlora-preview-message {
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 15px;
+      background: rgba(100, 116, 139, 0.12);
+    }
+
+    .quality-panel {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .quality-panel label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .quality-panel select {
+      width: 100%;
+      padding: 13px;
+      border-radius: 8px;
+      border: 1px solid #64748b;
+      background: transparent;
+      color: inherit;
+      font-size: 15px;
+    }
+
+    .quality-note {
+      font-size: 13px;
+      margin-top: 8px;
+      opacity: 0.75;
+    }
+
+    .platform-label {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(59, 130, 246, 0.12);
+      font-size: 13px;
+    }
+
+    .result-download[aria-disabled="true"] {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <header class="site-header">
-    <div class="container header-inner">
+<header class="site-header">
+  <div class="container header-inner">
 
-      <a href="./" class="brand" aria-label="VIDLORA Home">
-        <span class="brand-icon">▶</span>
-        <span>VIDLORA</span>
+    <a href="./" class="brand" aria-label="VIDLORA Home">
+      <span class="brand-icon">▶</span>
+      <span>VIDLORA</span>
+    </a>
+
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+      type="button">
+      ☰
+    </button>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#home">Home</a>
+      <a href="#downloader">Downloader</a>
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="about.html">About</a>
+    </nav>
+
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="container hero-content">
+
+      <div class="hero-label">
+        <span class="status-dot"></span>
+        MULTI-PLATFORM VIDEO PREVIEW
+      </div>
+
+      <h1>
+        Your Videos.
+        <span>Your Downloads.</span>
+      </h1>
+
+      <p class="hero-description">
+        Paste a supported video link, preview available content
+        and download authorized direct video files.
+      </p>
+
+      <a href="#downloader" class="primary-button">
+        Get Started <span>↓</span>
       </a>
 
-      <button
-        class="menu-toggle"
-        id="menuToggle"
-        aria-label="Toggle navigation"
-        aria-expanded="false"
-        type="button">
-        ☰
-      </button>
-
-      <nav class="main-nav" id="mainNav">
-        <a href="#home">Home</a>
-        <a href="#downloader">Downloader</a>
-        <a href="#features">Features</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="about.html">About</a>
-      </nav>
+      <div class="hero-benefits">
+        <span>✓ No Account Required</span>
+        <span>✓ No Cloud Video Storage</span>
+        <span>✓ Mobile Friendly</span>
+      </div>
 
     </div>
-  </header>
+  </section>
 
+  <!-- ADVERTISEMENT -->
+  <section class="ad-section container" aria-label="Advertisement">
+    <div class="ad-placeholder">
+      <span>ADVERTISEMENT</span>
+    </div>
+  </section>
 
-  <main>
+  <!-- DOWNLOADER -->
+  <section class="downloader-section" id="downloader">
+    <div class="container">
 
-    <!-- HERO -->
-    <section class="hero" id="home">
-      <div class="container hero-content">
-
-        <div class="hero-label">
-          <span class="status-dot"></span>
-          SIMPLE ONLINE VIDEO DOWNLOADER
-        </div>
-
-        <h1>
-          Download Videos.
-          <span>Keep It Simple.</span>
-        </h1>
-
-        <p class="hero-description">
-          Paste an authorized direct video link, preview your video
-          and download it to your device.
-          Simple, convenient and privacy-conscious.
+      <div class="section-heading">
+        <span class="section-tag">VIDEO TOOL</span>
+        <h2>Find Your Video</h2>
+        <p>
+          Paste a video URL from a supported platform or an
+          authorized direct MP4/WebM source.
         </p>
-
-        <a href="#downloader" class="primary-button">
-          Start Downloading <span>↓</span>
-        </a>
-
-        <div class="hero-benefits">
-          <span>✓ No Account Required</span>
-          <span>✓ No Video Storage</span>
-          <span>✓ Mobile Friendly</span>
-        </div>
-
       </div>
-    </section>
 
+      <div class="downloader-card">
 
-    <!-- ADVERTISEMENT -->
-    <section class="ad-section container" aria-label="Advertisement">
-      <div class="ad-placeholder">
-        <span>ADVERTISEMENT</span>
-      </div>
-    </section>
+        <form id="downloadForm">
 
+          <label for="videoUrl">Paste Your Video URL</label>
 
-    <!-- DOWNLOADER -->
-    <section class="downloader-section" id="downloader">
-      <div class="container">
+          <div class="url-input-wrapper">
 
-        <div class="section-heading">
-          <span class="section-tag">VIDEO DOWNLOADER</span>
-          <h2>Get Your Video</h2>
-          <p>
-            Enter a direct link to a video you own or are
-            authorized to download.
-          </p>
-        </div>
+            <span class="url-icon">🔗</span>
 
-        <div class="downloader-card">
-
-          <form id="downloadForm">
-
-            <label for="videoUrl">
-              Paste Your Video URL
-            </label>
-
-            <div class="url-input-wrapper">
-
-              <span class="url-icon">🔗</span>
-
-              <input
-                type="url"
-                id="videoUrl"
-                name="videoUrl"
-                placeholder="https://example.com/video.mp4"
-                autocomplete="url"
-                required
-                aria-describedby="urlHelp">
-
-              <button
-                type="button"
-                id="clearUrl"
-                class="clear-button"
-                aria-label="Clear URL">
-                ✕
-              </button>
-
-            </div>
-
-            <p id="urlHelp" class="input-help">
-              Supported direct media formats: MP4 and WebM.
-            </p>
+            <input
+              type="text"
+              id="videoUrl"
+              name="videoUrl"
+              placeholder="Paste your video link here..."
+              autocomplete="url"
+              required
+              maxlength="2048"
+              aria-describedby="urlHelp">
 
             <button
-              type="submit"
-              id="getVideoBtn"
-              class="download-button">
-              <span>Find Video</span>
-              <span>→</span>
+              type="button"
+              id="clearUrl"
+              class="clear-button"
+              aria-label="Clear URL">
+              ✕
             </button>
 
-          </form>
-
-
-          <!-- STATUS -->
-          <div
-            id="downloadStatus"
-            class="status-message"
-            role="status"
-            aria-live="polite"
-            hidden>
           </div>
 
+          <p id="urlHelp" class="input-help">
+            Supports recognized platform links and direct MP4/WebM URLs.
+          </p>
 
-          <!-- VIDEO RESULT -->
-          <div id="videoResult" class="video-result" hidden>
+          <button
+            type="submit"
+            id="getVideoBtn"
+            class="download-button">
+            <span id="buttonText">Find Video</span>
+            <span>→</span>
+          </button>
 
-            <h3>Your Video</h3>
+        </form>
 
-            <video
-              id="videoPreview"
-              class="video-preview"
-              controls
-              playsinline
-              preload="metadata">
-              Your browser does not support video playback.
-            </video>
+        <!-- STATUS -->
+        <div
+          id="downloadStatus"
+          class="status-message"
+          role="status"
+          aria-live="polite"
+          hidden>
+        </div>
+
+        <!-- VIDEO RESULT -->
+        <div id="videoResult" class="video-result" hidden>
+
+          <h3 id="resultTitle">Video Result</h3>
+
+          <div id="platformLabel" class="platform-label"></div>
+
+          <!-- Dynamic preview -->
+          <div
+            id="platformPreview"
+            class="platform-preview-area">
+          </div>
+
+          <!-- Direct video details -->
+          <div id="directVideoDetails" hidden>
 
             <div class="video-details">
 
@@ -213,10 +280,22 @@
               </div>
 
               <div class="detail-item">
-                <span>Source</span>
-                <strong>Direct Video</strong>
+                <span>Resolution</span>
+                <strong id="videoResolution">Checking...</strong>
               </div>
 
+            </div>
+
+            <div class="quality-panel">
+              <label for="qualitySelect">Available Video Quality</label>
+
+              <select id="qualitySelect" disabled>
+                <option value="">Checking available quality...</option>
+              </select>
+
+              <p class="quality-note" id="qualityNote">
+                Only the resolution available from the source can be selected.
+              </p>
             </div>
 
             <a
@@ -228,331 +307,493 @@
               <span>↓</span>
             </a>
 
-            <p class="input-help">
-              Download availability depends on the source server
-              and browser permissions.
-            </p>
-
           </div>
 
-        </div>
-
-        <p class="privacy-note">
-          🔒 Your video is not uploaded to VIDLORA storage.
-          Supported downloads are handled through your browser.
-        </p>
-
-      </div>
-    </section>
-
-
-    <!-- FEATURES -->
-    <section class="features-section" id="features">
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="section-tag">WHY VIDLORA?</span>
-          <h2>Simple Features. Better Experience.</h2>
-          <p>
-            Designed to make supported video downloads easier.
+          <p class="input-help" id="resultHelp">
+            Preview and download availability depend on source permissions.
           </p>
-        </div>
-
-        <div class="features-grid">
-
-          <article class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Simple Process</h3>
-            <p>
-              Paste a direct video link and access supported
-              download options.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Privacy Conscious</h3>
-            <p>
-              No VIDLORA video storage or mandatory user account
-              is required.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon">📱</div>
-            <h3>Mobile Friendly</h3>
-            <p>
-              Use the website on smartphones, tablets and desktop
-              browsers.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon">🎬</div>
-            <h3>Video Preview</h3>
-            <p>
-              Preview supported direct video links before
-              downloading.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon">💾</div>
-            <h3>No Cloud Storage</h3>
-            <p>
-              VIDLORA does not maintain a library of downloaded
-              videos.
-            </p>
-          </article>
-
-          <article class="feature-card">
-            <div class="feature-icon">🌐</div>
-            <h3>Easy Access</h3>
-            <p>
-              Open VIDLORA through your browser without installing
-              a separate application.
-            </p>
-          </article>
 
         </div>
 
       </div>
-    </section>
 
+      <p class="privacy-note">
+        🔒 VIDLORA does not provide cloud video storage.
+        Video sources are accessed directly through your browser.
+      </p>
 
-    <!-- HOW IT WORKS -->
-    <section class="how-section" id="how-it-works">
-      <div class="container">
+    </div>
+  </section>
 
-        <div class="section-heading">
-          <span class="section-tag">HOW IT WORKS</span>
-          <h2>Three Simple Steps</h2>
-          <p>Download supported direct video links easily.</p>
-        </div>
-
-        <div class="steps-grid">
-
-          <article class="step-card">
-            <span class="step-number">01</span>
-            <div class="step-icon">🔗</div>
-            <h3>Copy Video URL</h3>
-            <p>
-              Copy the direct URL of an authorized video.
-            </p>
-          </article>
-
-          <article class="step-card">
-            <span class="step-number">02</span>
-            <div class="step-icon">🔍</div>
-            <h3>Check Video</h3>
-            <p>
-              Paste the URL and let your browser check the
-              supported media format.
-            </p>
-          </article>
-
-          <article class="step-card">
-            <span class="step-number">03</span>
-            <div class="step-icon">⬇️</div>
-            <h3>Download</h3>
-            <p>
-              Preview and download the video when the source
-              permits it.
-            </p>
-          </article>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- SUPPORTED FORMATS -->
-    <section class="formats-section" id="formats">
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="section-tag">COMPATIBILITY</span>
-          <h2>Supported Video Formats</h2>
-          <p>
-            Support depends on the source server and browser.
-          </p>
-        </div>
-
-        <div class="formats-grid">
-
-          <div class="format-card">
-            <span class="format-icon">MP4</span>
-            <h3>MP4 Video</h3>
-            <p>Common video format.</p>
-          </div>
-
-          <div class="format-card">
-            <span class="format-icon">WEBM</span>
-            <h3>WebM Video</h3>
-            <p>Modern web video format.</p>
-          </div>
-
-        </div>
-
-        <p class="format-disclaimer">
-          VIDLORA does not bypass DRM, authentication,
-          platform restrictions or copyright protections.
-        </p>
-
-      </div>
-    </section>
-
-
-    <!-- SECOND ADVERTISEMENT -->
-    <section class="ad-section container" aria-label="Advertisement">
-      <div class="ad-placeholder">
-        <span>ADVERTISEMENT</span>
-      </div>
-    </section>
-
-
-    <!-- FAQ -->
-    <section class="faq-section" id="faq">
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="section-tag">HELP CENTER</span>
-          <h2>Frequently Asked Questions</h2>
-        </div>
-
-        <div class="faq-list">
-
-          <details class="faq-item">
-            <summary>Is VIDLORA free?</summary>
-            <p>
-              Yes. The initial VIDLORA website is designed
-              as a free-to-use service.
-            </p>
-          </details>
-
-          <details class="faq-item">
-            <summary>Do I need to create an account?</summary>
-            <p>
-              No. You can use the supported direct video
-              download functionality without registering.
-            </p>
-          </details>
-
-          <details class="faq-item">
-            <summary>Which video formats are supported?</summary>
-            <p>
-              The initial version supports direct MP4 and WebM
-              video links, subject to browser and source
-              compatibility.
-            </p>
-          </details>
-
-          <details class="faq-item">
-            <summary>Can I download videos from every website?</summary>
-            <p>
-              No. Some websites restrict downloading or require
-              authentication. VIDLORA does not bypass these
-              restrictions.
-            </p>
-          </details>
-
-          <details class="faq-item">
-            <summary>Does VIDLORA store my videos?</summary>
-            <p>
-              VIDLORA does not provide cloud video storage.
-              Supported media is handled through the user's
-              browser and original source.
-            </p>
-          </details>
-
-          <details class="faq-item">
-            <summary>Why is my video not downloading?</summary>
-            <p>
-              The source server may block cross-origin requests,
-              direct downloading or browser access. Try a
-              different authorized direct video URL.
-            </p>
-          </details>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- FINAL CTA -->
-    <section class="cta-section">
-      <div class="container">
-        <h2>Ready to Get Your Video?</h2>
-        <p>
-          Use VIDLORA for supported direct video links.
-        </p>
-        <a href="#downloader" class="primary-button">
-          Start Now →
-        </a>
-      </div>
-    </section>
-
-  </main>
-
-
-  <!-- FOOTER -->
-  <footer class="site-footer">
+  <!-- FEATURES -->
+  <section class="features-section" id="features">
     <div class="container">
 
-      <div class="footer-main">
-
-        <div class="footer-brand">
-          <a href="./" class="brand">
-            <span class="brand-icon">▶</span>
-            <span>VIDLORA</span>
-          </a>
-
-          <p>
-            A simple online tool for authorized direct
-            video downloads.
-          </p>
-        </div>
-
-        <div class="footer-links">
-          <h3>Explore</h3>
-          <a href="./">Home</a>
-          <a href="#downloader">Downloader</a>
-          <a href="#features">Features</a>
-          <a href="#faq">FAQ</a>
-        </div>
-
-        <div class="footer-links">
-          <h3>Information</h3>
-          <a href="about.html">About Us</a>
-          <a href="how-to-use.html">How to Use</a>
-          <a href="supported-formats.html">Supported Formats</a>
-          <a href="contact.html">Contact Us</a>
-        </div>
-
-        <div class="footer-links">
-          <h3>Legal</h3>
-          <a href="privacy-policy.html">Privacy Policy</a>
-          <a href="terms.html">Terms & Conditions</a>
-          <a href="copyright-policy.html">Copyright Policy</a>
-        </div>
-
+      <div class="section-heading">
+        <span class="section-tag">WHY VIDLORA?</span>
+        <h2>Simple Features. Better Experience.</h2>
+        <p>One place for supported video previews and direct downloads.</p>
       </div>
 
-      <div class="footer-bottom">
-        <p>
-          © <span id="currentYear">2026</span> VIDLORA.
-          All rights reserved.
-        </p>
+      <div class="features-grid">
 
-        <p>
-          Use only content you own or are authorized to download.
-        </p>
+        <article class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Platform Detection</h3>
+          <p>Recognizes supported video platform links.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">🎬</div>
+          <h3>Video Preview</h3>
+          <p>Preview videos through direct playback or official embeds.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">📺</div>
+          <h3>Quality Detection</h3>
+          <p>Displays the resolution exposed by a playable direct video source.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">⬇️</div>
+          <h3>Direct Download</h3>
+          <p>Download authorized direct MP4 and WebM files where permitted.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>Privacy Conscious</h3>
+          <p>No VIDLORA cloud video storage or account is required.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Mobile Friendly</h3>
+          <p>Designed for smartphones, tablets and desktop browsers.</p>
+        </article>
+
       </div>
 
     </div>
-  </footer>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-it-works">
+    <div class="container">
+
+      <div class="section-heading">
+        <span class="section-tag">HOW IT WORKS</span>
+        <h2>Three Simple Steps</h2>
+      </div>
+
+      <div class="steps-grid">
+
+        <article class="step-card">
+          <span class="step-number">01</span>
+          <div class="step-icon">🔗</div>
+          <h3>Paste URL</h3>
+          <p>Paste a supported video link.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-number">02</span>
+          <div class="step-icon">🔍</div>
+          <h3>Detect Video</h3>
+          <p>VIDLORA identifies the platform or direct media format.</p>
+        </article>
+
+        <article class="step-card">
+          <span class="step-number">03</span>
+          <div class="step-icon">⬇️</div>
+          <h3>Preview or Download</h3>
+          <p>Preview supported content or download authorized direct media.</p>
+        </article>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FORMATS -->
+  <section class="formats-section" id="formats">
+    <div class="container">
+
+      <div class="section-heading">
+        <span class="section-tag">COMPATIBILITY</span>
+        <h2>Supported Direct Formats</h2>
+        <p>Playback depends on the browser and actual media codecs.</p>
+      </div>
+
+      <div class="formats-grid">
+
+        <div class="format-card">
+          <span class="format-icon">MP4</span>
+          <h3>MP4 Video</h3>
+          <p>Direct MP4 video files.</p>
+        </div>
+
+        <div class="format-card">
+          <span class="format-icon">WEBM</span>
+          <h3>WebM Video</h3>
+          <p>Direct WebM video files.</p>
+        </div>
+
+      </div>
+
+      <p class="format-disclaimer">
+        VIDLORA does not bypass DRM, authentication,
+        platform restrictions or copyright protections.
+      </p>
+
+      <p style="text-align:center;margin-top:15px">
+        <a href="supported-formats.html">View Supported Formats →</a>
+      </p>
+
+    </div>
+  </section>
+
+  <!-- ADVERTISEMENT -->
+  <section class="ad-section container" aria-label="Advertisement">
+    <div class="ad-placeholder">
+      <span>ADVERTISEMENT</span>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+
+      <div class="section-heading">
+        <span class="section-tag">HELP CENTER</span>
+        <h2>Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>Is VIDLORA free?</summary>
+          <p>Yes. VIDLORA is designed as a free-to-use website.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I paste Instagram, Facebook and YouTube links?</summary>
+          <p>
+            VIDLORA can recognize supported URL patterns and attempt
+            official embeds. Preview availability depends on platform
+            permissions, privacy settings and browser restrictions.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I download from every platform?</summary>
+          <p>
+            No. Platform embeds do not provide download permission.
+            Direct downloads are limited to authorized media files
+            that the source permits your browser to access.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I select 144p, 360p, 720p or 1080p?</summary>
+          <p>
+            VIDLORA can display the resolution exposed by a direct
+            playable source. Multiple quality choices are possible
+            only when the source provides separate authorized files.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Does VIDLORA store videos?</summary>
+          <p>
+            VIDLORA does not provide cloud video storage. Videos
+            are accessed from their original sources.
+          </p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Why does a preview fail?</summary>
+          <p>
+            The source may block embedding, require login, restrict
+            cross-origin access or no longer provide the video.
+          </p>
+        </details>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2>Ready to Find Your Video?</h2>
+      <p>Try a supported video link with VIDLORA.</p>
+      <a href="#downloader" class="primary-button">Start Now →</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+
+    <div class="footer-main">
+
+      <div class="footer-brand">
+        <a href="./" class="brand">
+          <span class="brand-icon">▶</span>
+          <span>VIDLORA</span>
+        </a>
+        <p>A simple tool for supported video previews and authorized direct downloads.</p>
+      </div>
+
+      <div class="footer-links">
+        <h3>Explore</h3>
+        <a href="./">Home</a>
+        <a href="#downloader">Downloader</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+      </div>
+
+      <div class="footer-links">
+        <h3>Information</h3>
+        <a href="about.html">About Us</a>
+        <a href="how-to-use.html">How to Use</a>
+        <a href="supported-formats.html">Supported Formats</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+
+      <div class="footer-links">
+        <h3>Legal</h3>
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="terms.html">Terms & Conditions</a>
+        <a href="copyright-policy.html">Copyright Policy</a>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <span id="currentYear">2026</span> VIDLORA. All rights reserved.</p>
+      <p>Use only content you own or are authorized to download.</p>
+    </div>
+
+  </div>
+</footer>
+
+<!-- HOMEPAGE CONTROLLER -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  "use strict";
+
+  const form = document.getElementById("downloadForm");
+  const input = document.getElementById("videoUrl");
+  const clearButton = document.getElementById("clearUrl");
+  const status = document.getElementById("downloadStatus");
+  const result = document.getElementById("videoResult");
+  const preview = document.getElementById("platformPreview");
+  const platformLabel = document.getElementById("platformLabel");
+  const directDetails = document.getElementById("directVideoDetails");
+  const resolution = document.getElementById("videoResolution");
+  const format = document.getElementById("videoFormat");
+  const qualitySelect = document.getElementById("qualitySelect");
+  const qualityNote = document.getElementById("qualityNote");
+  const downloadLink = document.getElementById("downloadLink");
+  const submitButton = document.getElementById("getVideoBtn");
+  const buttonText = document.getElementById("buttonText");
+  const resultHelp = document.getElementById("resultHelp");
+
+  let currentDirectUrl = null;
+
+  function showStatus(message, type) {
+    status.hidden = false;
+    status.textContent = message;
+    status.className = "status-message " + (type || "");
+  }
+
+  function resetResult() {
+    result.hidden = true;
+    preview.replaceChildren();
+    directDetails.hidden = true;
+    currentDirectUrl = null;
+    downloadLink.href = "#";
+    downloadLink.setAttribute("aria-disabled", "true");
+    qualitySelect.replaceChildren();
+    qualitySelect.disabled = true;
+  }
+
+  function setLoading(loading) {
+    submitButton.disabled = loading;
+    buttonText.textContent = loading ? "Checking..." : "Find Video";
+  }
+
+  function showResult(label) {
+    result.hidden = false;
+    platformLabel.textContent = label;
+  }
+
+  function addQualityOption(label, value) {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = label;
+    qualitySelect.appendChild(option);
+  }
+
+  function getPlatformLabel(platform) {
+    const labels = {
+      youtube: "YouTube",
+      instagram: "Instagram",
+      facebook: "Facebook",
+      vimeo: "Vimeo",
+      dailymotion: "Dailymotion",
+      direct: "Direct Video",
+      unknown: "Unsupported Website"
+    };
+
+    return labels[platform] || "Video";
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    resetResult();
+    status.hidden = true;
+
+    if (!window.VidloraURLDetector ||
+        !window.VidloraPlatformPreview ||
+        !window.VidloraSecurity) {
+      showStatus("Required VIDLORA scripts could not be loaded.", "error");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const safe = window.VidloraSecurity.validateUrl(
+        input.value.trim()
+      );
+
+      if (!safe.valid) {
+        throw new Error(safe.reason);
+      }
+
+      const detected = window.VidloraURLDetector.detect(safe.url);
+
+      if (!detected.valid) {
+        throw new Error(detected.message);
+      }
+
+      showResult(getPlatformLabel(detected.platform));
+
+      if (detected.platform === "direct") {
+        await handleDirectVideo(detected);
+      } else if (detected.previewSupported) {
+        const rendered = window.VidloraPlatformPreview.render(
+          detected,
+          preview
+        );
+
+        if (!rendered) {
+          throw new Error("This video preview could not be displayed.");
+        }
+
+        showStatus(
+          "Platform identified. Preview availability depends on the source.",
+          "success"
+        );
+
+        directDetails.hidden = true;
+        resultHelp.textContent =
+          "Platform previews do not provide a VIDLORA download option.";
+      } else {
+        window.VidloraPlatformPreview.render(detected, preview);
+        showStatus(detected.message, "error");
+      }
+
+    } catch (error) {
+      resetResult();
+      showStatus(error.message || "Unable to process this video URL.", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDirectVideo(detected) {
+    window.VidloraPlatformPreview.render(detected, preview);
+
+    directDetails.hidden = false;
+    format.textContent = detected.format.toUpperCase();
+    resolution.textContent = "Checking...";
+    resultHelp.textContent =
+      "The source must permit browser playback and downloading.";
+
+    currentDirectUrl = detected.originalUrl;
+
+    downloadLink.href = detected.originalUrl;
+    downloadLink.setAttribute("aria-disabled", "false");
+
+    addQualityOption("Checking source resolution...", "");
+
+    try {
+      const details = await window.VidloraDirectVideo.detectQuality(
+        detected.originalUrl
+      );
+
+      qualitySelect.replaceChildren();
+
+      if (details.qualityKnown) {
+        const label = details.quality + " (source file)";
+        addQualityOption(label, detected.originalUrl);
+        resolution.textContent = details.width + " × " + details.height;
+        qualitySelect.disabled = false;
+        qualityNote.textContent =
+          "Only one source resolution was detected. No other qualities were supplied.";
+      } else {
+        addQualityOption("Resolution unavailable", detected.originalUrl);
+        resolution.textContent = "Unknown";
+        qualitySelect.disabled = true;
+        qualityNote.textContent =
+          "The browser could not read the source resolution.";
+      }
+
+    } catch (error) {
+      qualitySelect.replaceChildren();
+      addQualityOption("Resolution unavailable", detected.originalUrl);
+      resolution.textContent = "Unknown";
+      qualitySelect.disabled = true;
+      qualityNote.textContent = error.message;
+    }
+
+    showStatus(
+      "Direct video link detected. Download may depend on source permissions and browser restrictions.",
+      "success"
+    );
+  }
+
+  form.addEventListener("submit", handleSubmit);
+
+  clearButton.addEventListener("click", function () {
+    input.value = "";
+    status.hidden = true;
+    resetResult();
+    input.focus();
+  });
+
+  qualitySelect.addEventListener("change", function () {
+    if (currentDirectUrl && qualitySelect.value) {
+      downloadLink.href = qualitySelect.value;
+    }
+  });
+
+  downloadLink.addEventListener("click", function (event) {
+    if (!currentDirectUrl) {
+      event.preventDefault();
+    }
+  });
+
+});
+</script>
 
 </body>
 </html>
