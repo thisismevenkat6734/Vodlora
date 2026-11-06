@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://thisismevenkat6734.github.io/Vidlora/sitemap.xml
