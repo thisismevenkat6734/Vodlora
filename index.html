@@ -31,12 +31,15 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
 
-  <!-- Load scripts in dependency order -->
+  <!-- Core scripts -->
   <script src="js/app.js" defer></script>
   <script src="js/security.js" defer></script>
   <script src="js/url-detector.js" defer></script>
   <script src="js/platform-preview.js" defer></script>
   <script src="js/direct-video.js" defer></script>
+
+  <!-- Vercel backend client -->
+  <script src="js/backend-client.js" defer></script>
 
   <style>
     .platform-preview-area {
@@ -123,7 +126,6 @@
 
 <header class="site-header">
   <div class="container header-inner">
-
     <a href="./" class="brand" aria-label="VIDLORA Home">
       <span class="brand-icon">▶</span>
       <span>VIDLORA</span>
@@ -145,7 +147,6 @@
       <a href="#how-it-works">How It Works</a>
       <a href="about.html">About</a>
     </nav>
-
   </div>
 </header>
 
@@ -210,7 +211,6 @@
           <label for="videoUrl">Paste Your Video URL</label>
 
           <div class="url-input-wrapper">
-
             <span class="url-icon">🔗</span>
 
             <input
@@ -230,7 +230,6 @@
               aria-label="Clear URL">
               ✕
             </button>
-
           </div>
 
           <p id="urlHelp" class="input-help">
@@ -247,7 +246,6 @@
 
         </form>
 
-        <!-- STATUS -->
         <div
           id="downloadStatus"
           class="status-message"
@@ -263,13 +261,12 @@
 
           <div id="platformLabel" class="platform-label"></div>
 
-          <!-- Dynamic preview -->
           <div
             id="platformPreview"
             class="platform-preview-area">
           </div>
 
-          <!-- Direct video details -->
+          <!-- DIRECT VIDEO DETAILS -->
           <div id="directVideoDetails" hidden>
 
             <div class="video-details">
@@ -374,7 +371,6 @@
         </article>
 
       </div>
-
     </div>
   </section>
 
@@ -411,7 +407,6 @@
         </article>
 
       </div>
-
     </div>
   </section>
 
@@ -520,7 +515,6 @@
         </details>
 
       </div>
-
     </div>
   </section>
 
@@ -605,6 +599,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const resultHelp = document.getElementById("resultHelp");
 
   let currentDirectUrl = null;
+  let activeRequest = 0;
 
   function showStatus(message, type) {
     status.hidden = false;
@@ -657,13 +652,21 @@ document.addEventListener("DOMContentLoaded", function () {
   async function handleSubmit(event) {
     event.preventDefault();
 
+    const requestId = ++activeRequest;
+
     resetResult();
     status.hidden = true;
 
-    if (!window.VidloraURLDetector ||
-        !window.VidloraPlatformPreview ||
-        !window.VidloraSecurity) {
-      showStatus("Required VIDLORA scripts could not be loaded.", "error");
+    if (
+      !window.VidloraURLDetector ||
+      !window.VidloraPlatformPreview ||
+      !window.VidloraSecurity ||
+      !window.VidloraBackend
+    ) {
+      showStatus(
+        "Required VIDLORA scripts or backend client could not be loaded.",
+        "error"
+      );
       return;
     }
 
@@ -674,99 +677,184 @@ document.addEventListener("DOMContentLoaded", function () {
         input.value.trim()
       );
 
-      if (!safe.valid) {
-        throw new Error(safe.reason);
+      if (!safe || !safe.valid) {
+        throw new Error(
+          safe && safe.reason
+            ? safe.reason
+            : "Please enter a valid video URL."
+        );
       }
 
       const detected = window.VidloraURLDetector.detect(safe.url);
 
-      if (!detected.valid) {
-        throw new Error(detected.message);
+      if (!detected || !detected.valid) {
+        throw new Error(
+          detected && detected.message
+            ? detected.message
+            : "This video URL is not supported."
+        );
       }
 
-      showResult(getPlatformLabel(detected.platform));
+      /*
+       * First call Vercel backend.
+       * This checks the server-side platform classification.
+       */
+      showStatus("Checking video URL with VIDLORA backend...", "info");
+
+      const backendResult = await window.VidloraBackend.detect(safe.url);
+
+      if (requestId !== activeRequest) return;
+
+      showResult(
+        getPlatformLabel(detected.platform)
+      );
 
       if (detected.platform === "direct") {
-        await handleDirectVideo(detected);
+        await handleDirectVideo(
+          detected,
+          safe.url,
+          requestId,
+          backendResult
+        );
       } else if (detected.previewSupported) {
-        const rendered = window.VidloraPlatformPreview.render(
+
+        window.VidloraPlatformPreview.render(
           detected,
           preview
         );
 
-        if (!rendered) {
-          throw new Error("This video preview could not be displayed.");
-        }
+        directDetails.hidden = true;
 
         showStatus(
-          "Platform identified. Preview availability depends on the source.",
+          backendResult.platform +
+          " detected by VIDLORA backend. Preview availability depends on the source.",
           "success"
         );
 
-        directDetails.hidden = true;
         resultHelp.textContent =
           "Platform previews do not provide a VIDLORA download option.";
+
       } else {
-        window.VidloraPlatformPreview.render(detected, preview);
-        showStatus(detected.message, "error");
+        window.VidloraPlatformPreview.render(
+          detected,
+          preview
+        );
+
+        showStatus(
+          detected.message || "This platform preview is unavailable.",
+          "error"
+        );
       }
 
     } catch (error) {
+      if (requestId !== activeRequest) return;
+
       resetResult();
-      showStatus(error.message || "Unable to process this video URL.", "error");
+
+      showStatus(
+        error.message || "Unable to process this video URL.",
+        "error"
+      );
+
     } finally {
-      setLoading(false);
+      if (requestId === activeRequest) {
+        setLoading(false);
+      }
     }
   }
 
-  async function handleDirectVideo(detected) {
-    window.VidloraPlatformPreview.render(detected, preview);
+  async function handleDirectVideo(
+    detected,
+    safeUrl,
+    requestId,
+    backendResult
+  ) {
+    window.VidloraPlatformPreview.render(
+      detected,
+      preview
+    );
 
     directDetails.hidden = false;
+
     format.textContent = detected.format.toUpperCase();
     resolution.textContent = "Checking...";
+
     resultHelp.textContent =
       "The source must permit browser playback and downloading.";
 
-    currentDirectUrl = detected.originalUrl;
+    currentDirectUrl = safeUrl;
 
-    downloadLink.href = detected.originalUrl;
+    /*
+     * Ask backend to inspect the direct-video URL.
+     * This currently verifies the URL pattern only,
+     * not the actual file or its download permission.
+     */
+    showStatus("Inspecting direct video URL...", "info");
+
+    const inspection = await window.VidloraBackend.inspect(safeUrl);
+
+    if (requestId !== activeRequest) return;
+
+    if (!inspection.success) {
+      throw new Error("Backend could not inspect this video URL.");
+    }
+
+    downloadLink.href = safeUrl;
     downloadLink.setAttribute("aria-disabled", "false");
 
+    qualitySelect.replaceChildren();
     addQualityOption("Checking source resolution...", "");
 
     try {
       const details = await window.VidloraDirectVideo.detectQuality(
-        detected.originalUrl
+        safeUrl
       );
+
+      if (requestId !== activeRequest) return;
 
       qualitySelect.replaceChildren();
 
-      if (details.qualityKnown) {
+      if (details && details.qualityKnown) {
         const label = details.quality + " (source file)";
-        addQualityOption(label, detected.originalUrl);
-        resolution.textContent = details.width + " × " + details.height;
+
+        addQualityOption(label, safeUrl);
+
+        resolution.textContent =
+          details.width + " × " + details.height;
+
         qualitySelect.disabled = false;
+
         qualityNote.textContent =
           "Only one source resolution was detected. No other qualities were supplied.";
+
       } else {
-        addQualityOption("Resolution unavailable", detected.originalUrl);
+        addQualityOption("Resolution unavailable", safeUrl);
+
         resolution.textContent = "Unknown";
+
         qualitySelect.disabled = true;
+
         qualityNote.textContent =
           "The browser could not read the source resolution.";
       }
 
     } catch (error) {
+      if (requestId !== activeRequest) return;
+
       qualitySelect.replaceChildren();
-      addQualityOption("Resolution unavailable", detected.originalUrl);
+
+      addQualityOption("Resolution unavailable", safeUrl);
+
       resolution.textContent = "Unknown";
+
       qualitySelect.disabled = true;
-      qualityNote.textContent = error.message;
+
+      qualityNote.textContent =
+        error.message || "Resolution could not be detected.";
     }
 
     showStatus(
-      "Direct video link detected. Download may depend on source permissions and browser restrictions.",
+      "Direct video URL pattern accepted by the backend. Actual file availability and download permission are not verified.",
       "success"
     );
   }
@@ -774,9 +862,15 @@ document.addEventListener("DOMContentLoaded", function () {
   form.addEventListener("submit", handleSubmit);
 
   clearButton.addEventListener("click", function () {
+    activeRequest++;
+
     input.value = "";
     status.hidden = true;
+
     resetResult();
+
+    setLoading(false);
+
     input.focus();
   });
 
@@ -791,6 +885,12 @@ document.addEventListener("DOMContentLoaded", function () {
       event.preventDefault();
     }
   });
+
+  const yearElement = document.getElementById("currentYear");
+
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+  }
 
 });
 </script>
