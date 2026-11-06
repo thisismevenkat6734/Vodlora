@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>VIDLORA Backend Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 16px;
+      font-family: Arial, sans-serif;
+      background: #101323;
+      color: #fff;
+    }
+
+    main {
+      max-width: 600px;
+      margin: 30px auto;
+    }
+
+    h1 {
+      color: #8da8ff;
+    }
+
+    p {
+      color: #b9bfd1;
+      line-height: 1.6;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin: 12px 0;
+      border: 1px solid #454c68;
+      border-radius: 10px;
+      background: #1b2035;
+      color: white;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 10px;
+      background: #5578ff;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      padding: 16px;
+      margin-top: 20px;
+      border-radius: 10px;
+      background: #080b15;
+      color: #a8ffbf;
+      line-height: 1.5;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #f3cf84;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>VIDLORA API Test</h1>
+
+    <p>
+      Test your VIDLORA backend URL detection API.
+    </p>
+
+    <form id="testForm">
+      <input
+        id="videoUrl"
+        type="url"
+        placeholder="Paste a video URL"
+        required
+        maxlength="2048"
+      >
+
+      <button id="testButton" type="submit">
+        Test URL Detection
+      </button>
+    </form>
+
+    <pre id="result" aria-live="polite">Waiting for test...</pre>
+
+    <p class="note">
+      This page tests URL detection only. It does not download or extract videos.
+    </p>
+  </main>
+
+  <script>
+    "use strict";
+
+    const API_URL = "https://vidlora.vercel.app/api/detect";
+
+    const form = document.getElementById("testForm");
+    const input = document.getElementById("videoUrl");
+    const button = document.getElementById("testButton");
+    const output = document.getElementById("result");
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const url = input.value.trim();
+
+      if (!url) {
+        output.textContent = "Please enter a URL.";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Testing...";
+      output.textContent = "Connecting to VIDLORA backend...";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ url }),
+          mode: "cors",
+          credentials: "omit",
+          cache: "no-store"
+        });
+
+        const data = await response.json();
+
+        output.textContent =
+          "HTTP Status: " + response.status + "\n\n" +
+          JSON.stringify(data, null, 2);
+
+      } catch (error) {
+        output.textContent =
+          "API test failed.\n\n" +
+          (error.message || "Unknown network error") +
+          "\n\nCheck deployment and CORS settings.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Test URL Detection";
+      }
+    });
+  </script>
+</body>
+</html>
