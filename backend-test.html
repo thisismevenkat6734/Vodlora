@@ -2,34 +2,38 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
   <title>VIDLORA Backend Test</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       padding: 24px 16px;
-      font-family: Arial, sans-serif;
       background: #101323;
       color: #fff;
+      font-family: Arial, sans-serif;
     }
 
     main {
-      max-width: 600px;
-      margin: 30px auto;
+      max-width: 620px;
+      margin: 24px auto;
     }
 
-    h1 {
-      color: #8da8ff;
-    }
+    h1 { color: #8da8ff; }
 
     p {
       color: #b9bfd1;
       line-height: 1.6;
+    }
+
+    .panel {
+      margin: 20px 0;
+      padding: 18px;
+      background: #1b2035;
+      border: 1px solid #343d5b;
+      border-radius: 14px;
     }
 
     input {
@@ -38,9 +42,9 @@
       margin: 12px 0;
       border: 1px solid #454c68;
       border-radius: 10px;
-      background: #1b2035;
+      background: #101323;
       color: white;
-      font-size: 16px;
+      font-size: 15px;
     }
 
     button {
@@ -56,107 +60,154 @@
     }
 
     button:disabled {
-      opacity: 0.6;
+      opacity: .6;
+      cursor: wait;
     }
 
     pre {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
       padding: 16px;
-      margin-top: 20px;
-      border-radius: 10px;
+      margin-top: 18px;
       background: #080b15;
       color: #a8ffbf;
+      border-radius: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
       line-height: 1.5;
     }
 
     .note {
-      font-size: 13px;
       color: #f3cf84;
+      font-size: 13px;
     }
   </style>
 </head>
 <body>
-  <main>
-    <h1>VIDLORA API Test</h1>
+<main>
+  <h1>VIDLORA Backend Test</h1>
+  <p>Test the VIDLORA backend APIs.</p>
 
-    <p>
-      Test your VIDLORA backend URL detection API.
-    </p>
+  <section class="panel">
+    <h2>1. Platform Detection</h2>
+    <p>Identify supported video platforms.</p>
 
-    <form id="testForm">
-      <input
-        id="videoUrl"
-        type="url"
-        placeholder="Paste a video URL"
-        required
-        maxlength="2048"
-      >
+    <input
+      id="platformUrl"
+      type="url"
+      placeholder="Paste Instagram or YouTube URL"
+      maxlength="2048"
+    >
 
-      <button id="testButton" type="submit">
-        Test URL Detection
-      </button>
-    </form>
+    <button id="detectButton" type="button">
+      Test Platform Detection
+    </button>
 
-    <pre id="result" aria-live="polite">Waiting for test...</pre>
+    <pre id="detectResult">Waiting for test...</pre>
+  </section>
 
-    <p class="note">
-      This page tests URL detection only. It does not download or extract videos.
-    </p>
-  </main>
+  <section class="panel">
+    <h2>2. Direct Video Inspection</h2>
+    <p>Check whether a URL appears to point to an MP4 or WebM file.</p>
 
-  <script>
-    "use strict";
+    <input
+      id="directUrl"
+      type="url"
+      placeholder="Paste direct MP4 or WebM URL"
+      maxlength="2048"
+    >
 
-    const API_URL = "https://vidlora.vercel.app/api/detect";
+    <button id="inspectButton" type="button">
+      Inspect Video URL
+    </button>
 
-    const form = document.getElementById("testForm");
-    const input = document.getElementById("videoUrl");
-    const button = document.getElementById("testButton");
-    const output = document.getElementById("result");
+    <pre id="inspectResult">Waiting for test...</pre>
+  </section>
 
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
+  <p class="note">
+    Important: These APIs perform URL classification only.
+    They do not fetch video files, verify their actual contents,
+    determine resolution, or guarantee download permission.
+  </p>
+</main>
 
-      const url = input.value.trim();
+<script>
+"use strict";
 
-      if (!url) {
-        output.textContent = "Please enter a URL.";
-        return;
-      }
+const API_BASE = "https://vidlora.vercel.app/api";
 
-      button.disabled = true;
-      button.textContent = "Testing...";
-      output.textContent = "Connecting to VIDLORA backend...";
+async function callApi(endpoint, url) {
+  const response = await fetch(`${API_BASE}/${endpoint}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ url }),
+    mode: "cors",
+    credentials: "omit",
+    cache: "no-store"
+  });
 
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ url }),
-          mode: "cors",
-          credentials: "omit",
-          cache: "no-store"
-        });
+  let data;
 
-        const data = await response.json();
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error("Backend returned an invalid response.");
+  }
 
-        output.textContent =
-          "HTTP Status: " + response.status + "\n\n" +
-          JSON.stringify(data, null, 2);
+  return {
+    status: response.status,
+    data
+  };
+}
 
-      } catch (error) {
-        output.textContent =
-          "API test failed.\n\n" +
-          (error.message || "Unknown network error") +
-          "\n\nCheck deployment and CORS settings.";
-      } finally {
-        button.disabled = false;
-        button.textContent = "Test URL Detection";
-      }
-    });
-  </script>
+async function runTest(inputId, buttonId, resultId, endpoint) {
+  const input = document.getElementById(inputId);
+  const button = document.getElementById(buttonId);
+  const output = document.getElementById(resultId);
+
+  const url = input.value.trim();
+
+  if (!url) {
+    output.textContent = "Please enter a URL.";
+    return;
+  }
+
+  button.disabled = true;
+  output.textContent = "Connecting to backend...";
+
+  try {
+    const result = await callApi(endpoint, url);
+
+    output.textContent =
+      "HTTP Status: " + result.status + "\n\n" +
+      JSON.stringify(result.data, null, 2);
+
+  } catch (error) {
+    output.textContent =
+      "Request failed:\n" +
+      (error.message || "Unknown error");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+document.getElementById("detectButton").addEventListener("click", () => {
+  runTest(
+    "platformUrl",
+    "detectButton",
+    "detectResult",
+    "detect"
+  );
+});
+
+document.getElementById("inspectButton").addEventListener("click", () => {
+  runTest(
+    "directUrl",
+    "inspectButton",
+    "inspectResult",
+    "inspect"
+  );
+});
+</script>
 </body>
 </html>
