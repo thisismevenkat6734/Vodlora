@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>VIDLORA - Free Online Video Downloader</title>
+
+  <meta name="description" content="VIDLORA is a simple online video downloader for authorized direct MP4 and WebM video links. Preview and download supported videos easily.">
+
+  <meta name="keywords" content="online video downloader, MP4 downloader, WebM downloader, direct video download">
+
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#101827">
+
+  <meta property="og:title" content="VIDLORA - Video Downloader">
+  <meta property="og:description" content="Paste an authorized video link, preview it and download supported videos.">
+  <meta property="og:type" content="website">
+
+  <link rel="canonical" href="https://YOUR-GITHUB-USERNAME.github.io/YOUR-REPOSITORY/">
+
+  <link rel="icon" href="assets/icons/favicon.png">
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <script src="js/app.js" defer></script>
+  <script src="js/downloader.js" defer></script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="container header-inner">
+
+      <a href="index.html" class="brand" aria-label="VIDLORA Home">
+        <span class="brand-icon">▶</span>
+        <span>VIDLORA</span>
+      </a>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle navigation"
+        aria-expanded="false"
+        type="button">
+        ☰
+      </button>
+
+      <nav class="main-nav" id="mainNav">
+        <a href="#home">Home</a>
+        <a href="#downloader">Downloader</a>
+        <a href="#features">Features</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="about.html">About</a>
+      </nav>
+
+    </div>
+  </header>
+
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="container hero-content">
+
+        <div class="hero-label">
+          <span class="status-dot"></span>
+          SIMPLE ONLINE VIDEO DOWNLOADER
+        </div>
+
+        <h1>
+          Download Videos.
+          <span>Keep It Simple.</span>
+        </h1>
+
+        <p class="hero-description">
+          Paste an authorized direct video link, preview your video
+          and download it to your device.
+          Simple, convenient and privacy-conscious.
+        </p>
+
+        <a href="#downloader" class="primary-button">
+          Start Downloading <span>↓</span>
+        </a>
+
+        <div class="hero-benefits">
+          <span>✓ No Account Required</span>
+          <span>✓ No Video Storage</span>
+          <span>✓ Mobile Friendly</span>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ADVERTISEMENT AREA -->
+    <section class="ad-section container" aria-label="Advertisement">
+      <div class="ad-placeholder">
+        <span>ADVERTISEMENT</span>
+      </div>
+    </section>
+
+
+    <!-- DOWNLOADER -->
+    <section class="downloader-section" id="downloader">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">VIDEO DOWNLOADER</span>
+          <h2>Get Your Video</h2>
+          <p>
+            Enter a direct link to a video you own or are
+            authorized to download.
+          </p>
+        </div>
+
+        <div class="downloader-card">
+
+          <form id="downloadForm">
+
+            <label for="videoUrl">
+              Paste Your Video URL
+            </label>
+
+            <div class="url-input-wrapper">
+
+              <span class="url-icon">🔗</span>
+
+              <input
+                type="url"
+                id="videoUrl"
+                name="videoUrl"
+                placeholder="https://example.com/video.mp4"
+                autocomplete="url"
+                required
+                aria-describedby="urlHelp">
+
+              <button
+                type="button"
+                id="clearUrl"
+                class="clear-button"
+                aria-label="Clear URL">
+                ✕
+              </button>
+
+            </div>
+
+            <p id="urlHelp" class="input-help">
+              Supported direct media formats: MP4 and WebM.
+            </p>
+
+            <button
+              type="submit"
+              id="getVideoBtn"
+              class="download-button">
+              <span>Find Video</span>
+              <span>→</span>
+            </button>
+
+          </form>
+
+
+          <!-- STATUS -->
+          <div
+            id="downloadStatus"
+            class="status-message"
+            role="status"
+            aria-live="polite"
+            hidden>
+          </div>
+
+
+          <!-- VIDEO RESULT -->
+          <div id="videoResult" class="video-result" hidden>
+
+            <h3>Your Video</h3>
+
+            <video
+              id="videoPreview"
+              class="video-preview"
+              controls
+              playsinline
+              preload="metadata">
+              Your browser does not support video playback.
+            </video>
+
+            <div class="video-details">
+
+              <div class="detail-item">
+                <span>Format</span>
+                <strong id="videoFormat">--</strong>
+              </div>
+
+              <div class="detail-item">
+                <span>Source</span>
+                <strong>Direct Video</strong>
+              </div>
+
+            </div>
+
+            <a
+              href="#"
+              id="downloadLink"
+              class="download-button result-download"
+              download>
+              <span>Download Video</span>
+              <span>↓</span>
+            </a>
+
+            <p class="input-help">
+              Download availability depends on the source server
+              and browser permissions.
+            </p>
+
+          </div>
+
+        </div>
+
+        <p class="privacy-note">
+          🔒 Your video is not uploaded to VIDLORA storage.
+          Supported downloads are handled through your browser.
+        </p>
+
+      </div>
+    </section>
+
+
+    <!-- FEATURES -->
+    <section class="features-section" id="features">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">WHY VIDLORA?</span>
+          <h2>Simple Features. Better Experience.</h2>
+          <p>
+            Designed to make supported video downloads easier.
+          </p>
+        </div>
+
+        <div class="features-grid">
+
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Simple Process</h3>
+            <p>
+              Paste a direct video link and access supported
+              download options.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Privacy Conscious</h3>
+            <p>
+              No VIDLORA video storage or mandatory user account
+              is required.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Mobile Friendly</h3>
+            <p>
+              Use the website on smartphones, tablets and desktop
+              browsers.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🎬</div>
+            <h3>Video Preview</h3>
+            <p>
+              Preview supported direct video links before
+              downloading.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">💾</div>
+            <h3>No Cloud Storage</h3>
+            <p>
+              VIDLORA does not maintain a library of downloaded
+              videos.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h3>Easy Access</h3>
+            <p>
+              Open VIDLORA through your browser without installing
+              a separate application.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- HOW IT WORKS -->
+    <section class="how-section" id="how-it-works">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">HOW IT WORKS</span>
+          <h2>Three Simple Steps</h2>
+          <p>Download supported direct video links easily.</p>
+        </div>
+
+        <div class="steps-grid">
+
+          <article class="step-card">
+            <span class="step-number">01</span>
+            <div class="step-icon">🔗</div>
+            <h3>Copy Video URL</h3>
+            <p>
+              Copy the direct URL of an authorized video.
+            </p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-number">02</span>
+            <div class="step-icon">🔍</div>
+            <h3>Check Video</h3>
+            <p>
+              Paste the URL and let your browser check the
+              supported media format.
+            </p>
+          </article>
+
+          <article class="step-card">
+            <span class="step-number">03</span>
+            <div class="step-icon">⬇️</div>
+            <h3>Download</h3>
+            <p>
+              Preview and download the video when the source
+              permits it.
+            </p>
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- SUPPORTED FORMATS -->
+    <section class="formats-section" id="formats">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">COMPATIBILITY</span>
+          <h2>Supported Video Formats</h2>
+          <p>
+            Support depends on the source server and browser.
+          </p>
+        </div>
+
+        <div class="formats-grid">
+
+          <div class="format-card">
+            <span class="format-icon">MP4</span>
+            <h3>MP4 Video</h3>
+            <p>Common video format.</p>
+          </div>
+
+          <div class="format-card">
+            <span class="format-icon">WEBM</span>
+            <h3>WebM Video</h3>
+            <p>Modern web video format.</p>
+          </div>
+
+        </div>
+
+        <p class="format-disclaimer">
+          VIDLORA does not bypass DRM, authentication,
+          platform restrictions or copyright protections.
+        </p>
+
+      </div>
+    </section>
+
+
+    <!-- SECOND ADVERTISEMENT AREA -->
+    <section class="ad-section container" aria-label="Advertisement">
+      <div class="ad-placeholder">
+        <span>ADVERTISEMENT</span>
+      </div>
+    </section>
+
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+      <div class="container">
+
+        <div class="section-heading">
+          <span class="section-tag">HELP CENTER</span>
+          <h2>Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq-list">
+
+          <details class="faq-item">
+            <summary>Is VIDLORA free?</summary>
+            <p>
+              Yes. The initial VIDLORA website is designed
+              as a free-to-use service.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Do I need to create an account?</summary>
+            <p>
+              No. You can use the supported direct video
+              download functionality without registering.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Which video formats are supported?</summary>
+            <p>
+              The initial version supports direct MP4 and WebM
+              video links, subject to browser and source
+              compatibility.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Can I download videos from every website?</summary>
+            <p>
+              No. Some websites restrict downloading or require
+              authentication. VIDLORA does not bypass these
+              restrictions.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Does VIDLORA store my videos?</summary>
+            <p>
+              VIDLORA does not provide cloud video storage.
+              Supported media is handled through the user's
+              browser and original source.
+            </p>
+          </details>
+
+          <details class="faq-item">
+            <summary>Why is my video not downloading?</summary>
+            <p>
+              The source server may block cross-origin requests,
+              direct downloading or browser access. Try a
+              different authorized direct video URL.
+            </p>
+          </details>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- FINAL CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2>Ready to Get Your Video?</h2>
+        <p>
+          Use VIDLORA for supported direct video links.
+        </p>
+        <a href="#downloader" class="primary-button">
+          Start Now →
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+
+      <div class="footer-main">
+
+        <div class="footer-brand">
+          <a href="index.html" class="brand">
+            <span class="brand-icon">▶</span>
+            <span>VIDLORA</span>
+          </a>
+
+          <p>
+            A simple online tool for authorized direct
+            video downloads.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Explore</h3>
+          <a href="index.html">Home</a>
+          <a href="#downloader">Downloader</a>
+          <a href="#features">Features</a>
+          <a href="#faq">FAQ</a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Information</h3>
+          <a href="about.html">About Us</a>
+          <a href="how-to-use.html">How to Use</a>
+          <a href="supported-formats.html">Supported Formats</a>
+          <a href="contact.html">Contact Us</a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Legal</h3>
+          <a href="privacy-policy.html">Privacy Policy</a>
+          <a href="terms.html">Terms & Conditions</a>
+          <a href="copyright-policy.html">Copyright Policy</a>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="currentYear">2026</span> VIDLORA.
+          All rights reserved.
+        </p>
+
+        <p>
+          Use only content you own or are authorized to download.
+        </p>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>
